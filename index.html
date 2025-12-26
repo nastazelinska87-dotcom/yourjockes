@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор жартів</title>
+    <style>
+        /* Яскравий градієнтний фон на всю сторінку */
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
+        }
+
+        /* Стильна картка з ефектом розмиття скла */
+        .card { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px);
+            padding: 2.5rem; 
+            border-radius: 24px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+            text-align: center; 
+            width: 380px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h3 { 
+            color: #4b6cb7; 
+            margin-top: 0; 
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        /* Блок для жарту з анімацією */
+        #joke { 
+            font-size: 1.15rem; 
+            margin: 25px 0; 
+            color: #444; 
+            min-height: 80px; 
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Сучасна кнопка з градієнтом */
+        button { 
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); 
+            color: white; 
+            border: none; 
+            padding: 14px 28px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        button:hover { 
+            box-shadow: 0 6px 20px rgba(37, 117, 252, 0.4);
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .error { color: #ff4b2b; font-size: 0.9rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>😂 Жарт дня</h3>
+    <div id="joke">Завантаження...</div>
+    <button onclick="getJoke()">Спробувати інший</button>
+</div>
+
+<script>
+    function getJoke() {
+        var xhr = new XMLHttpRequest();
+        var jokeElement = document.getElementById('joke');
+        
+        // Робимо текст напівпрозорим під час завантаження
+        jokeElement.style.opacity = '0.5';
+
+        xhr.open('GET', 'jokes.txt', true);
+
+        xhr.onload = function() {
+            jokeElement.style.opacity = '1';
+            if (xhr.status === 200) {
+                var jokes = xhr.responseText.split('|');
+                var randomIdx = Math.floor(Math.random() * jokes.length);
+                jokeElement.innerText = jokes[randomIdx].trim();
+            } else {
+                jokeElement.innerHTML = '<span class="error">Помилка ' + xhr.status + ': Файл не знайдено</span>';
+            }
+        };
+
+        xhr.onerror = function() {
+            jokeElement.style.opacity = '1';
+            jokeElement.innerHTML = '<span class="error">Помилка мережі або CORS. <br> Використовуйте Live Server!</span>';
+        };
+
+        xhr.send();
+    }
+
+    window.onload = getJoke;
+</script>
+
+</body>
+</html>
